@@ -1,0 +1,116 @@
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.Scanner;
+
+class Order {
+    String name;
+    String address;
+    String contactNumber;
+    String waterType;
+    int quantity;
+    String pickupDate;
+    double totalPrice;
+    String pickupTime;
+
+    public Order(String name, String address, String contactNumber, String waterType, int quantity, String pickupDate, double totalPrice, String pickupTime) {
+        this.name = name;
+        this.address = address;
+        this.contactNumber = contactNumber;
+        this.waterType = waterType;
+        this.quantity = quantity;
+        this.pickupDate = pickupDate;
+        this.totalPrice = totalPrice;
+        this.pickupTime = pickupTime;
+    }
+}
+
+class WaterDeliverySystem {
+    private ArrayList<Order> orders;
+
+    public WaterDeliverySystem() {
+        orders = new ArrayList<>();
+    }
+
+    public Order addOrder(String name, String address, String contactNumber, String waterType, int quantity) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        String pickupDate = sdf.format(calendar.getTime());
+
+        double pricePerGallon = waterType.equals("Alkaline") ? 45.0 : 35.0;
+        double totalPrice = pricePerGallon * quantity;
+
+        String pickupTime = "15 minutes - 30 minutes, depending on location";
+
+        Order order = new Order(name, address, contactNumber, waterType, quantity, pickupDate, totalPrice, pickupTime);
+        orders.add(order);
+        return order;
+    }
+
+
+    public void displayOrders() {
+        System.out.println("\nOrder List:");
+        for (int i = 0; i < orders.size(); i++) {
+            Order order = orders.get(i);
+            System.out.println("Order #" + (i + 1));
+            System.out.println("Name: " + order.name);
+            System.out.println("Address: " + order.address);
+            System.out.println("Contact Number: " + order.contactNumber);
+            System.out.println("Water Type: " + order.waterType);
+            System.out.println("Quantity: " + order.quantity);
+            System.out.println("Total Price: " + order.totalPrice + " pesos");
+            System.out.println("Pickup Date: " + order.pickupDate);
+            System.out.println("Pickup Time: " + order.pickupTime);
+            System.out.println("------------------------");
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        WaterDeliverySystem system = new WaterDeliverySystem();
+
+        System.out.println("Welcome to Mik Water Refilling and Delivery Station!");
+
+        boolean keepOrdering = true;
+
+        while (keepOrdering) {
+            System.out.println("Enter your name:");
+            String name = scanner.nextLine();
+
+            System.out.println("Enter your address: (add as many details as possible");
+            String address = scanner.nextLine();
+
+            System.out.println("Enter your contact number:");
+            String contactNumber = scanner.nextLine();
+
+            System.out.println("Choose water type: 1 for Alkaline (45 pesos), 2 for Purified (35 pesos):");
+            int waterChoice = scanner.nextInt();
+            scanner.nextLine();
+
+            String waterType = (waterChoice == 1) ? "Alkaline" : "Purified";
+
+            System.out.println("Enter quantity of gallons:");
+            int quantity = scanner.nextInt();
+            scanner.nextLine();
+
+            Order newOrder = system.addOrder(name, address, contactNumber, waterType, quantity);
+
+            System.out.println("\nYour order has been placed successfully!");
+            System.out.println("Your water will be delivered tomorrow. Thank you for ordering!");
+            System.out.println("Total Price: " + newOrder.totalPrice + " pesos");
+            System.out.println("Your gallons will be picked up in " + newOrder.pickupTime + ".");
+
+            System.out.println("Do you want to place another order? (yes/no):");
+            String response = scanner.nextLine().toLowerCase();
+            keepOrdering = response.equals("yes");
+        }
+
+        system.displayOrders();
+
+        scanner.close();
+    }
+}
